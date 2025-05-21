@@ -13,4 +13,18 @@ class PetsRepository:
                 return pets
             except NoResultFound:
                 return []
+
+    def delete_pets(self, name: str) -> int:
+        with self.__db_connection as database:
+            try:
+                result = ( database.session
+                                .query(PetsTable)
+                                .filter(PetsTable.name == name)
+                                .delete()
+                         )
+                database.session.commit()
+                return result
+            except Exception as exception:
+                database.session.rollback()
+                raise exception
             
